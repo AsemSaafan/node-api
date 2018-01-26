@@ -1,0 +1,14 @@
+{
+  "name": "elguide-api-server",
+  "version": "1.0.0",
+  "description": "API for elguide website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Asem Saafan",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^3.0.1"
+  }
+}
