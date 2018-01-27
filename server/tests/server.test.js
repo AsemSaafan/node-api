@@ -6,8 +6,16 @@ const {app} = require ('./../server');
 const {Guide} = require ('./../models/guide');
 
 
+const guides = [{
+  name: 'First guide '
+}, {
+  name: 'Second guide '
+}];
+
 beforeEach((done) => {
-  Guide.remove({}).then(() => done());
+  Guide.remove({}).then(() => {
+    return Guide.insertMany(guides);
+  }).then(() => done());
 });
 
 describe('POST /guides', () => {
@@ -26,7 +34,7 @@ describe('POST /guides', () => {
           return done(err);
         }
 
-        Guide.find().then((guides) => {
+        Guide.find({name}).then((guides) => {
           expect(guides.length).toBe(1);
           expect(guides[0].name).toBe(name);
           done();
@@ -45,9 +53,21 @@ describe('POST /guides', () => {
         }
 
         Guide.find().then((guides) => {
-          expect(guides.length).toBe(0);
+          expect(guides.length).toBe(2);
           done();
         }).catch((e) => done(e));
       });
+  });
+});
+
+describe('GET /guides', () => {
+  it('should get all guides', (done) => {
+    request(app)
+      .get('/guides')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.guides.length).toBe(2);
+      })
+      .end(done);
   });
 });

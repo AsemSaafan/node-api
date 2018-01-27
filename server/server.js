@@ -1,5 +1,6 @@
 var express = require ('express');
 var bodyParser = require('body-parser');
+const {ObjectID} = require('mongodb');
 
 var {mongoose} = require ('./db/mongoose')
 var {Guide} = require ('./models/guide')
@@ -21,11 +22,38 @@ app.post('/guides',(req , response)=>{
 		response.status(400).send(e);
 	});
 });
+app.get('/guides', (req, res) => {
+  Guide.find().then((guides) => {
+    res.send({guides});
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+app.get('/guides/:id', (req, res) => {
+  var id = req.params.id;
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+  Guide.findById(id).then((guide) => {
+    if (!guide) {
+      return res.status(404).send();
+    }
+
+    res.send({guide});
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
 
 app.listen(3000 , ()=>{
 	console.log('Started on port 3000');
 	
 });
+
+
 
 
 // var newGuide = new Guide({
