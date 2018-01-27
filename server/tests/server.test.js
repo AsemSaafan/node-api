@@ -1,5 +1,6 @@
 const expect = require ('expect');
 const request = require ('supertest');
+const {ObjectID} = require('mongodb');
 
 
 const {app} = require ('./../server');
@@ -7,8 +8,10 @@ const {Guide} = require ('./../models/guide');
 
 
 const guides = [{
+  _id: new ObjectID(),
   name: 'First guide '
 }, {
+  _id: new ObjectID(),
   name: 'Second guide '
 }];
 
@@ -68,6 +71,34 @@ describe('GET /guides', () => {
       .expect((res) => {
         expect(res.body.guides.length).toBe(2);
       })
+      .end(done);
+  });
+});
+
+describe('GET /guides/:id', () => {
+  it('should return guide doc', (done) => {
+    request(app)
+      .get(`/guides/${guides[0]._id.toHexString()}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.guide.name).toBe(guides[0].name);
+      })
+      .end(done);
+  });
+
+  it('should return 404 if guide not found', (done) => {
+    var hexId = new ObjectID().toHexString();
+
+    request(app)
+      .get(`/guides/${hexId}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('should return 404 for non-object ids', (done) => {
+    request(app)
+      .get('/guides/123abc')
+      .expect(404)
       .end(done);
   });
 });
