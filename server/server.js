@@ -15,7 +15,9 @@ app.use(bodyParser.json());
 app.post('/guides',(req , response)=>{
 	// console.log(req.body);
 	var guide = new Guide ({
-		name : req.body.name
+		name : req.body.name,
+    Adress:req.body.Adress,
+    Rating:req.body.Rating
 	});
 
 	guide.save().then((doc)=>{
